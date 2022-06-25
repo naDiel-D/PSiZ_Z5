@@ -98,3 +98,58 @@ void Details(const char* file) // Metadane
         fclose(test);
     }
 }
+
+void NegativePic(const char* file) // Tworzenie negatywu
+{
+
+    FILE* test = fopen(file, "rb");
+    FILE* neg = fopen("negatyw.bmp", "wb");
+
+    if (neg == nullptr)
+    {
+        cout << endl << "Blad otwarcia pliku!" << endl;
+    }
+    else
+    {
+        cout << endl << "Negatyw jest wlasnie produkowany." << endl;
+
+        fseek(neg, 0, SEEK_SET);
+        fwrite(&File.Type, sizeof(File.Type), 1, neg);
+        fwrite(&File.Size, sizeof(File.Size), 1, neg);
+        fwrite(&File.Reserved1, sizeof(File.Reserved1), 1, neg);
+        fwrite(&File.Reserved2, sizeof(File.Reserved2), 1, neg);
+        fwrite(&File.OffBits, sizeof(File.OffBits), 1, neg);
+
+
+        fseek(neg, 14, SEEK_SET);
+        fwrite(&Pic.headerSize, sizeof(Pic.headerSize), 1, neg);
+        fwrite(&Pic.width, sizeof(Pic.width), 1, neg);
+        fwrite(&Pic.height, sizeof(Pic.height), 1, neg);
+        fwrite(&Pic.planes, sizeof(Pic.planes), 1, neg);
+        fwrite(&Pic.bitPerPixel, sizeof(Pic.bitPerPixel), 1, neg);
+        fwrite(&Pic.compresion, sizeof(Pic.compresion), 1, neg);
+        fwrite(&Pic.imageSize, sizeof(Pic.imageSize), 1, neg);
+        fwrite(&Pic.xPelsPerMeter, sizeof(Pic.xPelsPerMeter), 1, neg);
+        fwrite(&Pic.yPelsPerMeter, sizeof(Pic.yPelsPerMeter), 1, neg);
+        fwrite(&Pic.colorUsed, sizeof(Pic.colorUsed), 1, neg);
+        fwrite(&Pic.colorImportant, sizeof(Pic.colorImportant), 1, neg);
+
+
+        fseek(neg, sizeof(File.OffBits), SEEK_SET);
+
+        int Pic;
+        for (int i = File.OffBits; i < File.Size; i++)
+        {
+            fseek(test, i, SEEK_SET);
+            fseek(neg, i, SEEK_SET);
+            fread(&Pic, 3, 1, test);
+            Pic = INT_MAX - Pic;
+            fwrite(&Pic, 3, 1, neg);
+        }
+
+        cout << endl;
+        fclose(test);
+        fclose(neg);
+    }
+}
+
