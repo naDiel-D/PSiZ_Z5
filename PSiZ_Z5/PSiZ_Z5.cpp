@@ -153,3 +153,17 @@ void NegativePic(const char* file) // Tworzenie negatywu
     }
 }
 
+int main(int arc, char* argv[])
+{
+    const char* file;
+
+    if (argv[1] == nullptr) // Czy sciezka = argument
+        file = "test.bmp"; // Default path
+    else
+        file = argv[1];
+
+    Details(file); // Print info
+    NegativePic(file); // Create negative pic
+
+    return 0;
+}
